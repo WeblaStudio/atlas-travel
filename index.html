@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07131a">
+  <meta name="description" content="ATLAS؛ روایتی سینمایی از مقصدهایی که هنوز ندیده‌ایم. جهان را بچرخان، مقصدت را انتخاب کن و سفر بعدی‌ات را تصور کن.">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ATLAS — جهان، آن‌سوی نقشه">
+  <meta property="og:description" content="یک تجربهٔ تعاملی برای کشف مقصدهای جهان.">
+  <title>ATLAS — جهان، آن‌سوی نقشه</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cinematic.css">
+
+  <!-- نسخهٔ Three.js پین شده است. OrbitControls از همین نسخه وارد می‌شود. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">رفتن به محتوای اصلی</a>
+
+  <!-- لودر سینمایی -->
+  <div class="loader" id="pageLoader" role="status" aria-live="polite" aria-label="در حال آماده‌سازی تجربهٔ سفر">
+    <div class="loader__orbit" aria-hidden="true">
+      <span class="loader__planet"></span>
+      <span class="loader__plane">✈</span>
+    </div>
+    <p class="loader__eyebrow">A WORLD OF STORIES</p>
+    <div class="loader__count"><span id="loaderPercent">۰</span><span>%</span></div>
+    <div class="loader__track"><span id="loaderBar"></span></div>
+    <p class="loader__hint">جهان را برایت آماده می‌کنیم...</p>
+  </div>
+
+  <div class="cinematic-backdrop" id="sceneBackdrop" aria-hidden="true">
+    <div class="cinematic-backdrop__layer is-active" data-backdrop-layer="0"></div>
+    <div class="cinematic-backdrop__layer" data-backdrop-layer="1"></div>
+  </div>
+  <canvas class="ambient-particles" id="particlesCanvas" aria-hidden="true"></canvas>
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="pointer-glow" id="pointerGlow" aria-hidden="true"></div>
+  <div class="custom-cursor" id="customCursor" aria-hidden="true"><span id="cursorLabel"></span></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"><span></span></div>
+
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="#top" aria-label="ATLAS، بازگشت به ابتدای صفحه">
+      <span class="brand__symbol" aria-hidden="true">A<span>·</span></span>
+      <span class="brand__name">ATLAS<small>BEYOND THE MAP</small></span>
+    </a>
+
+    <p class="header-note"><span class="status-dot"></span> سفر از همین‌جا آغاز می‌شود</p>
+
+    <button class="menu-trigger magnetic" id="menuTrigger" type="button" aria-expanded="false" aria-controls="fullMenu">
+      <span class="menu-trigger__label">منو</span>
+      <span class="menu-trigger__icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </header>
+
+  <!-- منوی تمام صفحه -->
+  <nav class="full-menu" id="fullMenu" aria-label="منوی اصلی" aria-hidden="true" inert>
+    <div class="full-menu__backdrop"></div>
+    <div class="full-menu__inner">
+      <p class="eyebrow">CHOOSE YOUR NEXT CHAPTER</p>
+      <a class="full-menu__link" href="#top" data-cursor="برو"><span>۰۱</span> آغاز سفر</a>
+      <a class="full-menu__link" href="#world" data-cursor="ببین"><span>۰۲</span> کرهٔ زمین</a>
+      <a class="full-menu__link" href="#destinations" data-cursor="کشف کن"><span>۰۳</span> مقصدهای ویژه</a>
+      <a class="full-menu__link" href="#experiences" data-cursor="تجربه کن"><span>۰۴</span> تجربه‌ها</a>
+      <a class="full-menu__link" href="#journeyRoute" data-cursor="دنبال کن"><span>۰۵</span> مسیر سفر</a>
+      <a class="full-menu__link" href="#gallery" data-cursor="ببین"><span>۰۶</span> گالری</a>
+      <a class="full-menu__link" href="#booking" data-cursor="برنامه بریز"><span>۰۷</span> مشاورهٔ سفر</a>
+      <div class="full-menu__footer"><span>هر مقصد، روایتی تازه.</span><span>ATLAS / 2026</span></div>
+    </div>
+  </nav>
+
+  <main id="mainContent">
+    <!-- HERO -->
+    <section class="hero scene" id="top" aria-labelledby="heroTitle">
+      <div class="hero__backdrop" aria-hidden="true">
+        <div class="hero__moon"></div>
+        <div class="hero__horizon"></div>
+        <div class="hero__ridge hero__ridge--far"></div>
+        <div class="hero__ridge hero__ridge--near"></div>
+      </div>
+
+      <!-- تصویر ادیتوریال کوچک برای شکستن فضای خالی هیرو -->
+      <figure class="hero-editorial" data-cursor="ببین" aria-label="چشم‌انداز کوهستان و دریاچه در لحظهٔ غروب">
+        <div class="hero-editorial__image-wrap">
+          <img
+            src="assets/images/hero-expedition.webp"
+            alt="مسافری بر فراز دریاچه‌ای کوهستانی در نور گرم غروب"
+            width="1122"
+            height="1402"
+            fetchpriority="high"
+          >
+          <span class="hero-editorial__topline">FIELD NOTES <span>—</span> 01</span>
+          <figcaption class="hero-editorial__caption">
+            <span>THE ART OF GETTING LOST</span>
+            <strong>فراتر از افق</strong>
+            <small>جایی برای دوباره کشف کردن</small>
+          </figcaption>
+        </div>
+        <span class="hero-editorial__seal" aria-hidden="true"><span>GO</span><strong>BEYOND</strong><span>THE MAP</span></span>
+        <span class="hero-editorial__coordinate" aria-hidden="true">46° 48′ N — 09° 31′ E</span>
+      </figure>
+
+      <div class="hero__content wrap">
+        <p class="eyebrow hero__eyebrow"><span class="eyebrow__line"></span> THE WORLD IS STILL UNWRITTEN</p>
+        <h1 class="hero__title" id="heroTitle">
+          <span class="title-line"><span>همه‌چیز از</span></span>
+          <span class="title-line title-line--accent"><span>یک <em>جایی</em></span></span>
+          <span class="title-line"><span>شروع می‌شود.</span></span>
+        </h1>
+        <p class="hero__copy">جایی دورتر از عادت‌های هر روز؛ جایی که هوا بوی تازگی می‌دهد و جهان، قصه‌ای تازه برایت کنار گذاشته است.</p>
+        <div class="hero__actions">
+          <a class="button button--gold magnetic" href="#world" data-cursor="شروع کن"><span>سفر را شروع کن</span><span class="button__arrow" aria-hidden="true">↙</span></a>
+          <span class="hero__microcopy"><span class="hero__microcopy-line"></span> ۳۶۰ درجه، هزاران امکان</span>
+        </div>
+      </div>
+
+      <div class="hero__side-note" aria-hidden="true"><span>SCROLL TO EXPLORE</span><i></i><span>۳۵° ۴۱′ N / ۵۱° ۲۵′ E</span></div>
+      <div class="hero__index" aria-hidden="true"><strong>01</strong><span>/ 11</span></div>
+    </section>
+
+    <!-- کرهٔ زمین سه‌بعدی -->
+    <section class="world scene" id="world" aria-labelledby="worldTitle">
+      <div class="world__atmosphere" aria-hidden="true"></div>
+      <div class="wrap world__intro">
+        <div>
+          <p class="eyebrow"><span class="eyebrow__line"></span> YOUR WORLD, IN MOTION</p>
+          <h2 class="world__title" id="worldTitle">جهان را لمس کن؛<br><em>نه فقط تماشایش.</em></h2>
+        </div>
+        <p class="world__description">کره را بچرخان، روی نورهای کوچک مکث کن و مقصدی را انتخاب کن که چیزی درونت را صدا می‌زند.</p>
+      </div>
+
+      <div class="world__layout wrap">
+        <div class="globe-stage" id="globeStage">
+          <div class="globe-stage__aura" aria-hidden="true"></div>
+          <div class="globe-canvas" id="globeCanvas" role="img" aria-label="کرهٔ سه‌بعدی زمین با مقصدهای قابل انتخاب"></div>
+          <div class="globe-fallback" id="globeFallback" aria-hidden="true">
+            <div class="globe-fallback__sphere"><span>ATLAS</span></div>
+            <p>YOUR WORLD IS WAITING</p>
+          </div>
+          <div class="globe-stage__label globe-stage__label--top"><span class="status-dot"></span> LIVE ORBIT <small>INTERACTIVE GLOBE</small></div>
+          <div class="globe-stage__label globe-stage__label--bottom">DRAG TO ROTATE <span>↗</span></div>
+
+          <aside class="destination-card" id="destinationCard" aria-live="polite" aria-label="اطلاعات مقصد انتخاب‌شده" hidden>
+            <div class="destination-card__image" id="destinationCardImageWrap">
+              <img id="destinationCardImage" alt="" loading="lazy">
+              <span class="destination-card__image-index" id="destinationCardIndex">DESTINATION 01</span>
+              <button class="destination-card__close" id="destinationCardClose" type="button" aria-label="بستن کارت مقصد">×</button>
+            </div>
+            <div class="destination-card__body">
+              <p class="destination-card__eyebrow" id="destinationCardRegion">A PLACE TO FEEL</p>
+              <h3 id="destinationCardTitle">ایسلند</h3>
+              <p class="destination-card__description" id="destinationCardDescription"></p>
+              <div class="destination-card__season"><span>فصل پیشنهادی</span><strong id="destinationCardSeason"></strong></div>
+              <a class="destination-card__link" href="#destinationIndex" id="destinationCardLink">این مقصد را کشف کن <span aria-hidden="true">↙</span></a>
+            </div>
+          </aside>
+
+          <p class="globe-message" id="globeMessage" role="status">در حال آماده‌سازی کرهٔ زمین…</p>
+        </div>
+
+        <aside class="destination-rail" aria-label="انتخاب مقصد با صفحه‌کلید">
+          <div class="destination-rail__heading"><span>THE DESTINATIONS</span><span>۱۱ نقطه روی نقشه</span></div>
+          <p class="destination-rail__hint">برای مشاهدهٔ هر مقصد، نام آن را انتخاب کن.</p>
+          <div class="destination-list" id="destinationIndex">
+            <button class="destination-chip" type="button" data-destination="iran"><span>۰۱</span><strong>ایران</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="italy"><span>۰۲</span><strong>ایتالیا</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="japan"><span>۰۳</span><strong>ژاپن</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="iceland"><span>۰۴</span><strong>ایسلند</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="maldives"><span>۰۵</span><strong>مالدیو</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="turkey"><span>۰۶</span><strong>ترکیه</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="france"><span>۰۷</span><strong>فرانسه</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="switzerland"><span>۰۸</span><strong>سوئیس</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="thailand"><span>۰۹</span><strong>تایلند</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="greece"><span>۱۰</span><strong>یونان</strong><i>↙</i></button>
+            <button class="destination-chip" type="button" data-destination="morocco"><span>۱۱</span><strong>مراکش</strong><i>↙</i></button>
+          </div>
+          <div class="destination-rail__foot"><span class="destination-rail__pulse"></span> هر نور، یک آغاز تازه</div>
+        </aside>
+      </div>
+
+      <div class="world__footer wrap"><span>01 — THE LIVING GLOBE</span><span>با ماوس بچرخان · در موبایل لمس کن</span><span>LAT / LONG / WONDER</span></div>
+    </section>
+
+    <!-- مقصدهای ویژه: در دسکتاپ با اسکرول افقی و در موبایل با swipe -->
+    <section class="destination-film cinematic-scene" id="destinations" data-cinematic-scene="destinations" data-theme="destinations" aria-labelledby="destinationsTitle">
+      <div class="destination-film__viewport" id="destinationViewport">
+        <div class="destination-film__intro wrap">
+          <div>
+            <p class="eyebrow"><span class="eyebrow__line"></span> PLACES THAT STAY WITH YOU</p>
+            <h2 class="section-display" id="destinationsTitle">بعضی جاها را<br><em>با خودت برمی‌گردانی.</em></h2>
+          </div>
+          <p>از لبهٔ یخ و آتش تا جزیره‌هایی که دریا دورشان حلقه زده است؛ هر قاب، دعوتی است برای دیدن جهان از زاویه‌ای تازه.</p>
+          <span class="horizontal-hint"><i></i> برای ادامهٔ سفر اسکرول کن</span>
+        </div>
+        <div class="destination-film__track" id="destinationTrack">
+          <article class="destination-panel destination-panel--iceland" data-parallax-panel>
+            <div class="destination-panel__image image-placeholder image-placeholder--iceland">
+              <img src="assets/images/iceland.jpg" data-local-image alt="آبشار و چشم‌انداز آتشفشانی ایسلند" loading="lazy">
+            </div>
+            <div class="destination-panel__shade"></div>
+            <div class="destination-panel__content">
+              <span class="destination-panel__index">01 / THE NORTH</span>
+              <p class="destination-panel__eyebrow">سرزمین آتش و سکوت</p>
+              <h3>ایسلند</h3>
+              <p>جایی که زمین نفس می‌کشد و آسمان، هر شب روایتی تازه می‌نویسد.</p>
+              <a href="#booking" class="destination-panel__link" data-cursor="کشف کن">این سفر را تصور کن <span>↙</span></a>
+            </div>
+            <span class="destination-panel__coordinates">64°08′ N · 21°56′ W</span>
+          </article>
+          <article class="destination-panel destination-panel--japan" data-parallax-panel>
+            <div class="destination-panel__image image-placeholder image-placeholder--japan">
+              <img src="assets/images/japan.jpg" data-local-image alt="باغ ژاپنی و کوه فوجی در مه صبحگاهی" loading="lazy">
+            </div>
+            <div class="destination-panel__shade"></div>
+            <div class="destination-panel__content">
+              <span class="destination-panel__index">02 / THE EAST</span>
+              <p class="destination-panel__eyebrow">آرامش میان دو جهان</p>
+              <h3>ژاپن</h3>
+              <p>آیین‌های کهن، خیابان‌های روشن و زیبایی‌ای که در مکث‌ها پنهان است.</p>
+              <a href="#booking" class="destination-panel__link" data-cursor="کشف کن">این سفر را تصور کن <span>↙</span></a>
+            </div>
+            <span class="destination-panel__coordinates">35°40′ N · 139°41′ E</span>
+          </article>
+          <article class="destination-panel destination-panel--maldives" data-parallax-panel>
+            <div class="destination-panel__image image-placeholder image-placeholder--maldives">
+              <img src="assets/images/maldives.jpg" data-local-image alt="دریای فیروزه‌ای و جزیره‌های مالدیو" loading="lazy">
+            </div>
+            <div class="destination-panel__shade"></div>
+            <div class="destination-panel__content">
+              <span class="destination-panel__index">03 / THE BLUE</span>
+              <p class="destination-panel__eyebrow">وقتی افق تمام نمی‌شود</p>
+              <h3>مالدیو</h3>
+              <p>آبیِ آرام، صبح‌های بی‌عجله و زمان کافی برای شنیدن صدای دریا.</p>
+              <a href="#booking" class="destination-panel__link" data-cursor="کشف کن">این سفر را تصور کن <span>↙</span></a>
+            </div>
+            <span class="destination-panel__coordinates">03°12′ N · 73°13′ E</span>
+          </article>
+          <article class="destination-panel destination-panel--morocco" data-parallax-panel>
+            <div class="destination-panel__image image-placeholder image-placeholder--morocco">
+              <img src="assets/images/morocco.jpg" data-local-image alt="معماری آجری و کوچه‌های رنگارنگ مراکش" loading="lazy">
+            </div>
+            <div class="destination-panel__shade"></div>
+            <div class="destination-panel__content">
+              <span class="destination-panel__index">04 / THE DESERT</span>
+              <p class="destination-panel__eyebrow">رنگ در دل شن‌ها</p>
+              <h3>مراکش</h3>
+              <p>کوچه‌های اخرایی، بازارهای پرقصه و شب‌هایی زیر آسمان بیابان.</p>
+              <a href="#booking" class="destination-panel__link" data-cursor="کشف کن">این سفر را تصور کن <span>↙</span></a>
+            </div>
+            <span class="destination-panel__coordinates">31°37′ N · 7°59′ W</span>
+          </article>
+        </div>
+        <div class="destination-film__footer wrap"><span>02 — SELECTED WORLDS</span><span>حرکت کن تا قاب بعدی را ببینی</span><span>SCROLL / DISCOVER</span></div>
+      </div>
+    </section>
+
+    <!-- تجربه‌ها -->
+    <section class="experiences cinematic-scene" id="experiences" data-cinematic-scene="experiences" data-theme="experiences" aria-labelledby="experiencesTitle">
+      <div class="wrap experiences__inner">
+        <div class="section-heading cinematic-reveal">
+          <div><p class="eyebrow"><span class="eyebrow__line"></span> TRAVEL YOUR OWN WAY</p><h2 class="section-display" id="experiencesTitle">قرار نیست فقط<br><em>جایی بروی.</em></h2></div>
+          <p>قرار است چیزی را تجربه کنی که بعد از برگشتن، هنوز همراهت بماند.</p>
+        </div>
+        <div class="experience-grid">
+          <article class="experience-card experience-card--adventure" data-experience-card data-theme-accent="#d7a66d">
+            <div class="experience-card__art image-placeholder image-placeholder--adventure"><span aria-hidden="true">↗</span></div>
+            <div class="experience-card__body"><span>01 / ADVENTURE</span><h3>آن‌سوی محدوده</h3><p>مسیرهای ناآشنا، قدم‌های جسورانه و خاطره‌هایی که خودت می‌سازی.</p></div>
+          </article>
+          <article class="experience-card experience-card--ocean" data-experience-card data-theme-accent="#6bc7cd">
+            <div class="experience-card__art image-placeholder image-placeholder--ocean"><span aria-hidden="true">≈</span></div>
+            <div class="experience-card__body"><span>02 / OCEAN</span><h3>به ریتم دریا</h3><p>جزیره‌های آرام، قایق‌های کوچک و لحظه‌هایی دور از شلوغی.</p></div>
+          </article>
+          <article class="experience-card experience-card--mountain" data-experience-card data-theme-accent="#a9c1aa">
+            <div class="experience-card__art image-placeholder image-placeholder--mountain"><span aria-hidden="true">△</span></div>
+            <div class="experience-card__body"><span>03 / MOUNTAINS</span><h3>بالای ابرها</h3><p>هوای تازه، افق باز و فرصتی برای دیدن همه‌چیز از دور.</p></div>
+          </article>
+          <article class="experience-card experience-card--culture" data-experience-card data-theme-accent="#cc9876">
+            <div class="experience-card__art image-placeholder image-placeholder--culture"><span aria-hidden="true">✳</span></div>
+            <div class="experience-card__body"><span>04 / CULTURE</span><h3>زندگی به زبان مردم</h3><p>طعم‌ها، صداها و داستان‌هایی که در هیچ راهنمایی جا نمی‌شوند.</p></div>
+          </article>
+          <article class="experience-card experience-card--slow" data-experience-card data-theme-accent="#d8bd86">
+            <div class="experience-card__art image-placeholder image-placeholder--slow"><span aria-hidden="true">◌</span></div>
+            <div class="experience-card__body"><span>05 / SLOW LUXURY</span><h3>هنرِ آهسته رفتن</h3><p>اقامت‌های خاص و مسیرهایی طراحی‌شده برای لذت بردن از خود راه.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- نقشهٔ مسیر -->
+    <section class="journey-route cinematic-scene" id="journeyRoute" data-cinematic-scene="route" data-theme="route" aria-labelledby="routeTitle">
+      <div class="wrap journey-route__inner">
+        <div class="journey-route__heading cinematic-reveal"><p class="eyebrow"><span class="eyebrow__line"></span> EVERY JOURNEY HAS A RHYTHM</p><h2 class="section-display" id="routeTitle">از خیال تا<br><em>خاطره.</em></h2><p>سفر خوب فقط مقصد نیست؛ رشته‌ای از لحظه‌هاست که به هم معنا می‌دهند.</p></div>
+        <div class="route-map" id="routeMap">
+          <svg class="route-map__svg" viewBox="0 0 1000 300" role="img" aria-label="خط مسیر نمادین سفر از آغاز تا مقصد نهایی">
+            <defs><linearGradient id="routeGradient" x1="0" x2="1"><stop offset="0%" stop-color="#d9b477"/><stop offset="100%" stop-color="#6cb6a4"/></linearGradient></defs>
+            <path class="route-map__path route-map__path--ghost" d="M930 230 C830 205 855 110 740 130 S600 245 510 180 S380 48 285 115 S160 235 65 70"/>
+            <path class="route-map__path route-map__path--draw" id="routePath" pathLength="1" d="M930 230 C830 205 855 110 740 130 S600 245 510 180 S380 48 285 115 S160 235 65 70"/>
+            <circle class="route-map__node" cx="930" cy="230" r="7"/><circle class="route-map__node" cx="740" cy="130" r="7"/><circle class="route-map__node" cx="510" cy="180" r="7"/><circle class="route-map__node" cx="285" cy="115" r="7"/><circle class="route-map__node" cx="65" cy="70" r="7"/>
+          </svg>
+          <div class="route-stations">
+            <article class="route-station" data-route-station><span>01</span><h3>جرقهٔ کنجکاوی</h3><p>یک تصویر، یک جمله، یک میلِ کوچک به رفتن.</p></article>
+            <article class="route-station" data-route-station><span>02</span><h3>انتخاب مسیر</h3><p>زمان، حال‌وهوا و آدم‌هایی که می‌خواهی همراهت باشند.</p></article>
+            <article class="route-station" data-route-station><span>03</span><h3>ورود به ناشناخته</h3><p>لحظه‌ای که نقشه کنار می‌رود و زندگی شروع می‌شود.</p></article>
+            <article class="route-station" data-route-station><span>04</span><h3>لحظه‌های ماندگار</h3><p>طعم‌ها، دیدارها و قاب‌هایی که مال خودت می‌شوند.</p></article>
+            <article class="route-station" data-route-station><span>05</span><h3>بازگشت با قصه</h3><p>به خانه برمی‌گردی؛ اما کمی متفاوت‌تر از قبل.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- آمار -->
+    <section class="travel-stats cinematic-scene" id="stats" data-cinematic-scene="stats" data-theme="stats" aria-label="نگاهی به تجربهٔ ATLAS">
+      <div class="wrap travel-stats__inner">
+        <div class="travel-stats__intro"><p class="eyebrow"><span class="eyebrow__line"></span> SMALL NUMBERS, BIG STORIES</p><h2>جهان، با هر سفر<br><em>بزرگ‌تر می‌شود.</em></h2></div>
+        <div class="stat-item"><strong data-counter="42">۴۲</strong><span>مقصد برای شروع خیال</span><small>DESTINATIONS</small></div>
+        <div class="stat-item"><strong data-counter="1280">۱٬۲۸۰</strong><span>مسافرِ قصه‌ساز</span><small>TRAVELLERS</small></div>
+        <div class="stat-item"><strong data-counter="12">۱۲</strong><span>سال تجربه در مسیر</span><small>YEARS OF DISCOVERY</small></div>
+      </div>
+      <p class="travel-stats__note wrap">این اعداد فعلاً نمونهٔ طراحی‌اند؛ پیش از انتشار، با داده‌های واقعی برند جایگزین شوند.</p>
+    </section>
+
+    <!-- گالری -->
+    <section class="travel-gallery cinematic-scene" id="gallery" data-cinematic-scene="gallery" data-theme="gallery" aria-labelledby="galleryTitle">
+      <div class="wrap">
+        <div class="section-heading cinematic-reveal"><div><p class="eyebrow"><span class="eyebrow__line"></span> FRAGMENTS OF EVERYWHERE</p><h2 class="section-display" id="galleryTitle">جهان از میان<br><em>قاب‌ها حرف می‌زند.</em></h2></div><p>لحظه‌هایی از جنس نور، فاصله و سکوت؛ نگاهی کوتاه به جاهایی که شاید فصل بعدی تو باشند.</p></div>
+        <div class="gallery-grid" id="galleryGrid">
+          <button class="gallery-tile gallery-tile--tall image-placeholder image-placeholder--gallery-ice" type="button" data-gallery-item data-full-image="assets/images/gallery-iceland.jpg" data-alt="یخچال طبیعی در ایسلند" aria-label="نمایش عکس یخچال طبیعی در ایسلند" data-cursor="ببین"><img src="assets/images/gallery-iceland.jpg" data-local-image alt="یخچال طبیعی در ایسلند" loading="lazy"><span class="gallery-tile__caption">01 / A QUIET NORTH</span></button>
+          <button class="gallery-tile gallery-tile--wide image-placeholder image-placeholder--gallery-japan" type="button" data-gallery-item data-full-image="assets/images/gallery-japan.jpg" data-alt="درختان و معماری ژاپنی" aria-label="نمایش عکس معماری ژاپن" data-cursor="ببین"><img src="assets/images/gallery-japan.jpg" data-local-image alt="درختان و معماری ژاپنی" loading="lazy"><span class="gallery-tile__caption">02 / STILLNESS</span></button>
+          <button class="gallery-tile image-placeholder image-placeholder--gallery-coast" type="button" data-gallery-item data-full-image="assets/images/gallery-coast.jpg" data-alt="خط ساحلی با آب فیروزه‌ای" aria-label="نمایش عکس خط ساحلی" data-cursor="ببین"><img src="assets/images/gallery-coast.jpg" data-local-image alt="خط ساحلی با آب فیروزه‌ای" loading="lazy"><span class="gallery-tile__caption">03 / BLUE HOURS</span></button>
+          <button class="gallery-tile image-placeholder image-placeholder--gallery-desert" type="button" data-gallery-item data-full-image="assets/images/gallery-desert.jpg" data-alt="تپه‌های شنی هنگام غروب" aria-label="نمایش عکس تپه‌های شنی" data-cursor="ببین"><img src="assets/images/gallery-desert.jpg" data-local-image alt="تپه‌های شنی هنگام غروب" loading="lazy"><span class="gallery-tile__caption">04 / GOLDEN SILENCE</span></button>
+          <button class="gallery-tile gallery-tile--tall image-placeholder image-placeholder--gallery-mountain" type="button" data-gallery-item data-full-image="assets/images/gallery-mountains.jpg" data-alt="قله‌های کوهستانی در میان ابرها" aria-label="نمایش عکس قله‌های کوهستانی" data-cursor="ببین"><img src="assets/images/gallery-mountains.jpg" data-local-image alt="قله‌های کوهستانی در میان ابرها" loading="lazy"><span class="gallery-tile__caption">05 / ABOVE CLOUDS</span></button>
+          <button class="gallery-tile image-placeholder image-placeholder--gallery-city" type="button" data-gallery-item data-full-image="assets/images/gallery-city.jpg" data-alt="شهر تاریخی در نور عصرگاهی" aria-label="نمایش عکس شهر تاریخی" data-cursor="ببین"><img src="assets/images/gallery-city.jpg" data-local-image alt="شهر تاریخی در نور عصرگاهی" loading="lazy"><span class="gallery-tile__caption">06 / AFTERNOON STORIES</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- نظرات -->
+    <section class="traveller-voices cinematic-scene" id="testimonials" data-cinematic-scene="voices" data-theme="voices" aria-labelledby="voicesTitle">
+      <div class="wrap">
+        <div class="section-heading cinematic-reveal"><div><p class="eyebrow"><span class="eyebrow__line"></span> THE MEMORIES WE CARRY</p><h2 class="section-display" id="voicesTitle">قصه‌ها با آدم‌ها<br><em>زنده می‌مانند.</em></h2></div><p>هر سفر از چشم یک نفر، جهان متفاوتی می‌سازد.</p></div>
+        <div class="voices-layout" id="voicesSlider">
+          <article class="voice-card voice-card--active" data-voice-card><span class="voice-card__quote">“</span><p>«برای اولین بار حس کردم برنامهٔ سفر با ریتم خودم هماهنگ است؛ فرصت دیدن داشتم، نه فقط رسیدن.»</p><div class="voice-card__person"><span class="voice-card__avatar">ن</span><span><strong>نگار</strong><small>سفر آرام به ایتالیا</small></span><span class="voice-card__stars" aria-label="۵ از ۵">★★★★★</span></div></article>
+          <article class="voice-card" data-voice-card><span class="voice-card__quote">“</span><p>«بهترین بخش سفرم آن لحظه‌هایی بود که از قبل برنامه‌ریزی نشده بودند؛ برایشان فضا گذاشته بودیم.»</p><div class="voice-card__person"><span class="voice-card__avatar voice-card__avatar--two">آ</span><span><strong>آرمان</strong><small>ماجراجویی در ایسلند</small></span><span class="voice-card__stars" aria-label="۵ از ۵">★★★★★</span></div></article>
+          <article class="voice-card" data-voice-card><span class="voice-card__quote">“</span><p>«با یک تصویر شروع شد و به سفری تبدیل شد که هنوز وقت تعریف‌کردنش، لبخند می‌زنم.»</p><div class="voice-card__person"><span class="voice-card__avatar voice-card__avatar--three">ر</span><span><strong>رها</strong><small>تعطیلات در ژاپن</small></span><span class="voice-card__stars" aria-label="۵ از ۵">★★★★★</span></div></article>
+        </div>
+        <p class="content-disclaimer">این روایت‌ها نمونه‌های نمایشی هستند و نقل‌قول مشتری واقعی محسوب نمی‌شوند.</p>
+        <div class="voice-controls"><button type="button" id="voicePrev" aria-label="نظر قبلی">→</button><span>TRAVELLER NOTES</span><button type="button" id="voiceNext" aria-label="نظر بعدی">←</button></div>
+      </div>
+    </section>
+
+    <!-- فرم مشاوره و رزرو -->
+    <section class="booking-section cinematic-scene" id="booking" data-cinematic-scene="booking" data-theme="booking" aria-labelledby="bookingTitle">
+      <div class="wrap booking-layout">
+        <div class="booking-copy cinematic-reveal"><p class="eyebrow"><span class="eyebrow__line"></span> YOUR NEXT CHAPTER STARTS HERE</p><h2 class="section-display" id="bookingTitle">اولین قدم را<br><em>با هم برداریم.</em></h2><p>از رویایی که در ذهن داری بگو؛ کمک می‌کنیم آن را به مسیری روشن و قابل‌اجرا تبدیل کنی.</p><div class="booking-note"><span>✳</span><p>این فرم در نسخهٔ فعلی نمایشی است؛ اتصال به سرویس رزرو در مرحلهٔ تعاملات اضافه خواهد شد.</p></div></div>
+        <form class="booking-form" id="bookingForm" novalidate>
+          <div class="booking-form__top"><span>TRAVEL PLANNER / 01</span><span>مشاورهٔ سفر</span></div>
+          <div class="booking-form__progress" aria-hidden="true"><span></span></div>
+          <fieldset class="booking-step" data-booking-step="0">
+            <legend>از کجا شروع کنیم؟</legend><p class="booking-step__hint">اول کمی از خودت و مقصدی که در ذهن داری بگو.</p>
+            <label for="bookingName">نام و نام خانوادگی</label><input id="bookingName" name="name" type="text" autocomplete="name" placeholder="نامت را اینجا بنویس" required minlength="2">
+            <label for="bookingEmail">ایمیل برای هماهنگی</label><input id="bookingEmail" name="email" type="email" autocomplete="email" placeholder="name@example.com" required>
+            <label for="bookingDestination">کدام مقصد صدایت می‌زند؟</label><select id="bookingDestination" name="destination" required><option value="">انتخاب مقصد</option><option value="iran">ایران</option><option value="italy">ایتالیا</option><option value="japan">ژاپن</option><option value="iceland">ایسلند</option><option value="maldives">مالدیو</option><option value="turkey">ترکیه</option><option value="france">فرانسه</option><option value="switzerland">سوئیس</option><option value="thailand">تایلند</option><option value="greece">یونان</option><option value="morocco">مراکش</option><option value="undecided">هنوز تصمیم نگرفته‌ام</option></select>
+            <div class="booking-form__actions"><button type="button" class="button button--gold" id="bookingNext">ادامهٔ برنامه‌ریزی <span class="button__arrow">↙</span></button><span>مرحلهٔ ۱ از ۲</span></div>
+          </fieldset>
+          <fieldset class="booking-step" data-booking-step="1" hidden>
+            <legend>سفر رؤیایی تو چه شکلی است؟</legend><p class="booking-step__hint">چند جزئیات کوچک کمک می‌کند پیشنهاد مناسب‌تری آماده شود.</p>
+            <label for="bookingDate">زمان احتمالی سفر</label><input id="bookingDate" name="date" type="date">
+            <label for="bookingGuests">چند نفر همراهت هستند؟</label><select id="bookingGuests" name="guests"><option value="1">فقط خودم</option><option value="2">دو نفر</option><option value="3-4">۳ تا ۴ نفر</option><option value="5+">۵ نفر یا بیشتر</option></select>
+            <label for="bookingNotes">چه تجربه‌ای در ذهن داری؟</label><textarea id="bookingNotes" name="notes" rows="3" placeholder="مثلاً طبیعت، معماری، دریا یا کمی از همه... "></textarea>
+            <div class="booking-form__actions"><button type="button" class="button button--quiet" id="bookingBack">بازگشت</button><button type="submit" class="button button--gold">ثبت درخواست نمایشی <span class="button__arrow">↙</span></button></div>
+            <p class="booking-form__message" id="bookingMessage" role="status" aria-live="polite"></p>
+          </fieldset>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer site-footer--cinematic atlas-footer" data-cinematic-scene="footer" data-theme="footer">
+    <div class="atlas-footer__glow" aria-hidden="true"></div>
+
+    <!-- Compact closing statement: cinematic, but never oversized. -->
+    <section class="footer-callout wrap" aria-labelledby="footerCalloutTitle">
+      <div class="footer-callout__copy">
+        <p class="eyebrow"><span class="eyebrow__line"></span> THE WORLD IS CALLING</p>
+        <h2 id="footerCalloutTitle">سفر بعدی‌ات،<br><em>یک داستان تازه.</em></h2>
+        <p class="footer-callout__description">
+          مقصدت را هنوز پیدا نکرده‌ای؟ از یک گفت‌وگوی کوتاه شروع کنیم؛
+          مسیر را با سلیقه، زمان و حال‌وهوای خودت می‌سازیم.
+        </p>
+      </div>
+
+      <div class="footer-callout__action">
+        <div class="footer-orbit" aria-hidden="true">
+          <span class="footer-orbit__ring footer-orbit__ring--one"></span>
+          <span class="footer-orbit__ring footer-orbit__ring--two"></span>
+          <span class="footer-orbit__core">A<span>·</span></span>
+          <span class="footer-orbit__label">YOUR NEXT<br>CHAPTER</span>
+          <span class="footer-orbit__star">✦</span>
+        </div>
+        <a class="footer-cta magnetic" href="#booking" data-cursor="شروع کن">
+          <span>برای سفر بعدی برنامه بریز</span>
+          <span class="footer-cta__arrow" aria-hidden="true">↙</span>
+        </a>
+        <p class="footer-callout__note">بدون تصمیم عجولانه؛ فقط یک شروع خوب.</p>
+      </div>
+    </section>
+
+    <div class="footer-rule wrap" aria-hidden="true"><span></span><i>ATLAS / FIELD NOTES</i><span></span></div>
+
+    <div class="footer-main wrap">
+      <div class="footer-brand-block">
+        <a class="brand brand--footer" href="#top" aria-label="ATLAS، بازگشت به ابتدای صفحه">
+          <span class="brand__symbol" aria-hidden="true">A<span>·</span></span>
+          <span class="brand__name">ATLAS<small>BEYOND THE MAP</small></span>
+        </a>
+        <p class="footer-brand-block__text">
+          برای آدم‌هایی که فقط مقصد نمی‌خواهند؛
+          می‌خواهند راه، آدم‌ها و لحظه‌ها را هم به خاطر بسپارند.
+        </p>
+        <div class="footer-coordinate" aria-label="مختصات نمادین اطلس">
+          <span class="footer-coordinate__dot"></span>
+          <span>35° 41′ N</span>
+          <span class="footer-coordinate__separator">/</span>
+          <span>51° 25′ E</span>
+        </div>
+      </div>
+
+      <nav class="footer-column" aria-label="کشف در اطلس">
+        <h3>کشف در اطلس</h3>
+        <a href="#world">کرهٔ زمین <span>↙</span></a>
+        <a href="#destinations">مقصدهای منتخب <span>↙</span></a>
+        <a href="#experiences">سبک‌های سفر <span>↙</span></a>
+        <a href="#gallery">گالری جهان <span>↙</span></a>
+      </nav>
+
+      <nav class="footer-column" aria-label="برنامه‌ریزی سفر">
+        <h3>برنامه‌ریزی سفر</h3>
+        <a href="#journeyRoute">مسیر سفر <span>↙</span></a>
+        <a href="#stats">تجربهٔ اطلس <span>↙</span></a>
+        <a href="#testimonials">روایت مسافران <span>↙</span></a>
+        <a href="#booking">مشاورهٔ سفر <span>↙</span></a>
+      </nav>
+
+      <div class="footer-contact-card">
+        <span class="footer-contact-card__index">THE FIRST STEP / 01</span>
+        <h3>هنوز نمی‌دانی کجا؟</h3>
+        <p>چند خط دربارهٔ حال‌وهوایی که دنبالش هستی بنویس؛ از همان‌جا شروع می‌کنیم.</p>
+        <a href="#booking" class="footer-contact-card__link">از رؤیایت بگو <span aria-hidden="true">↙</span></a>
+        <span class="footer-contact-card__orbit" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="footer-bottom wrap">
+      <div class="footer-bottom__copyright">
+        <span>© <span id="currentYear">۲۰۲۶</span> ATLAS</span>
+        <span>تمام حقوق این روایت محفوظ است.</span>
+      </div>
+      <p class="footer-bottom__motto"><span>✦</span> DESIGNED FOR THE CURIOUS</p>
+      <a class="back-top magnetic" href="#top" data-cursor="بالا">
+        بازگشت به آغاز <span aria-hidden="true">↑</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- لایت‌باکس به‌صورت اسکلت؛ تعامل کامل در مرحلهٔ بعد -->
+  <div class="lightbox" id="galleryLightbox" aria-hidden="true" inert>
+    <button class="lightbox__close" id="galleryLightboxClose" type="button" aria-label="بستن تصویر">×</button>
+    <button class="lightbox__backdrop" type="button" aria-label="بستن پنجرهٔ تصویر"></button>
+    <figure><img id="galleryLightboxImage" alt=""><figcaption id="galleryLightboxCaption"></figcaption></figure>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/scroll.js"></script>
+</body>
+</html>
